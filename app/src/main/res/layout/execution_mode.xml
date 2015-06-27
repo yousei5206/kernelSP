@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/kernelExecution">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:id="@+id/topFrame">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/executeMode"
+            android:text="Execution Mode"
+            android:textColor="@color/aka"
+            android:textSize="20sp"
+            android:textIsSelectable="false"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="5dp" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="Console Screen"
+            android:id="@+id/consoleScreen"
+            android:background="@color/dodgerBlue"
+            android:onClick="consoleMode"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp" />
+
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/k16ProcessorFrame">
+
+        <ImageView
+            android:layout_width="446dp"
+            android:layout_height="200dp"
+            android:id="@+id/k16Processor"
+            android:src="@drawable/cpu"
+            android:backgroundTint="@color/darkViolet" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:text="Memory Detail"
+            android:id="@+id/memDetailE"
+            android:onClick="memDetail"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:background="@color/cyan"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp" />
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/contorolSignalFrame"
+            android:layout_below="@+id/k16ALU"
+            android:layout_alignParentEnd="true">>
+            <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border"
+                android:orientation="horizontal"
+                android:layout_alignParentRight="true"
+                android:id="@+id/contorolSignal"
+                android:layout_marginRight="5dp">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ack" />
+
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/mreq" />
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:id="@+id/rw" />
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/iorq" />
+
+            </RadioGroup>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_below="@+id/contorolSignalFrame"
+                android:layout_alignStart="@+id/contorolSignalFrame"
+                android:id="@+id/controlSignalTextFrame">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ACK"
+
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="8dp"
+                    android:id="@+id/ackText" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MREQ"
+
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="8dp"
+                    android:id="@+id/mreqText" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="RW"
+
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="15dp"
+                    android:textSize="8dp"
+                    android:id="@+id/rwText" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="IORQ"
+
+                    android:textColor="@color/black"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="8dp"
+                    android:id="@+id/iorqText" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16ALU"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="120dp"
+            android:layout_marginLeft="60dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16CCR"
+            android:layout_marginLeft="20dp"
+            android:textColor="@color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="130dp"
+            android:background="@drawable/boder_processor" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16Lbus"
+            android:layout_marginLeft="40dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="75dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16Rbus"
+            android:layout_marginLeft="80dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignTop="@+id/k16Lbus"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16ACC"
+            android:layout_marginLeft="90dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignTop="@+id/k16ALU"
+            android:layout_alignStart="@+id/k16CCR"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16IXR"
+            android:layout_marginLeft="95dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignTop="@+id/k16ALU"
+            android:layout_toEndOf="@+id/k16Lbus"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16PC"
+            android:layout_marginLeft="235dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="115dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16IR"
+            android:layout_marginLeft="260dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="145dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16MAR"
+            android:layout_marginLeft="285dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="110dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16MDR"
+            android:layout_marginLeft="325dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="110dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16Abus"
+            android:layout_marginLeft="220dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignTop="@+id/memDetailE"
+            android:layout_alignParentStart="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16Dbus"
+            android:layout_marginLeft="230dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="170dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0000"
+            android:id="@+id/k16Obus"
+            android:layout_marginLeft="120dp"
+            android:background="@drawable/boder_processor"
+            android:textColor="@color/black"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="175dp" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/bottomFrame">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/border"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/executeModeTopFrame">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/executeModeGroup">
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BREAK POINT"
+                    android:textOn="BREAK POINT"
+                    android:textOff="BREAK POINT"
+                    android:layout_alignParentTop="true"
+                    android:layout_toStartOf="@+id/linearLayout3"
+                    android:id="@+id/breakPoint" />
+
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="CLOCK"
+                    android:textOn="CLOCK"
+                    android:textOff="CLOCK"
+                    android:id="@+id/clock" />
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="INSTRUCTION"
+                    android:textOn="INSTRUCTION"
+                    android:textOff="INSTRUCTION"
+                    android:id="@+id/instruction" />
+
+                <ToggleButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NORMAL"
+                    android:textOn="NORMAL"
+                    android:textOff="NORMAL"
+                    android:id="@+id/normal" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/executeModeTextFrame"
+                android:focusableInTouchMode="false">
+                <Space
+                    android:layout_width="150dp"
+                    android:layout_height="20px" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Execute Mode"
+                    android:id="@+id/executeModeText"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentBottom="false"
+            android:id="@+id/executeStopFrame">
+            <Button
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:text="EXECUTE"
+                android:clickable="false"
+                android:background="@color/lightseaGreen"
+                android:id="@+id/execute"
+                android:textColor="#ffffff"
+                android:layout_marginRight="10dp" />
+
+            <Button
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:text="STOP"
+                android:background="@color/crimson"
+                android:id="@+id/stop"
+                android:textColor="#ffffff" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="right"
+            android:layout_below="@+id/executeStopFrame"
+            android:layout_alignLeft="@+id/executeStopFrame"
+            android:layout_marginTop="3dp"
+            android:id="@+id/periodTopFrame">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/PeriodTextFrame">
+                <TextView
+                    android:id="@+id/cycle_txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="周期[ms]:" />
+
+                <TextView
+                    android:id="@+id/cycle_speed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2000"/>
+            </LinearLayout>
+            <SeekBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/periodBar"
+                android:max="300"
+                android:minHeight="5dp"
+                android:minWidth="150dip"
+                android:layout_gravity="right" />
+
+        </LinearLayout>
+    </RelativeLayout>
+
+
+
+
+
+</LinearLayout>
+
