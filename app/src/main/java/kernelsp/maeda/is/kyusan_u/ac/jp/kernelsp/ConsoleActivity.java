@@ -25,10 +25,11 @@ public class ConsoleActivity extends FragmentActivity {
     String pcData="";
     static int accData =0;
     static int ixrData =0;
-    int data0;
     String data3;
     String memData ="0000";
     String addressNum;
+    String displayDataAddress;
+    String displayDataInputdata;
 
 
     private static final int MEMORY_SIZE = 65536;
@@ -200,7 +201,9 @@ public class ConsoleActivity extends FragmentActivity {
         ddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ConsoleActivity.this, memory.get(address), Toast.LENGTH_SHORT).show();
+                displayDataAddress = Data.getZeroBit(address);
+                displayDataInputdata = Data.getZeroBit(memoryData.get(address));
+                Toast.makeText(ConsoleActivity.this,displayDataAddress+"番地  "+displayDataInputdata, Toast.LENGTH_SHORT).show();
             }
         });
     }
