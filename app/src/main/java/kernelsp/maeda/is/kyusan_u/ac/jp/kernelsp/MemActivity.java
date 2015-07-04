@@ -13,10 +13,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 public class MemActivity extends Fragment {
-    private String[] items = { "0000    0000", "0001    0000", "0002    0000", "0003    0000",
-            "0004    0000", "0005    0000", "0006    0000", "0007    0000" };
 
-    private int data =0;
     private static ArrayList<String> memoryTest;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

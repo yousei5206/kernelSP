@@ -3,10 +3,8 @@ package kernelsp.maeda.is.kyusan_u.ac.jp.kernelsp;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 //import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +29,7 @@ public class ConsoleActivity extends Fragment {
     String pcData = "";
     static int accData = 0;
     static int ixrData = 0;
-    String data3;
+    String dataString;
     String memData = "0000";
     String addressNum;
     String displayDataAddress;
@@ -60,17 +58,18 @@ public class ConsoleActivity extends Fragment {
         memory = new ArrayList<>(MEMORY_SIZE);
         memoryData = new ArrayList<>(MEMORY_SIZE);
         for (int i = 0x000; i < MEMORY_SIZE; i++) {
-            if (0x000f >= i) {
+            if (0x000f  >= i) {
                 Data.zeroBit = "000";
-                addressNum = Data.zeroBit + Integer.toHexString(i);
-            } else if (0x000f < i && 0x00f0 >= i) {
+                addressNum = Data.zeroBit + Integer.toHexString(i).toUpperCase();
+            } else if (0x0010 <= i && 0x00ff >= i) {
                 Data.zeroBit = "00";
-                addressNum = Data.zeroBit + Integer.toHexString(i);
-            } else if (0x00f0 < i && 0x0f00 >= i) {
+                addressNum = Data.zeroBit + Integer.toHexString(i).toUpperCase();
+            } else if (0x0100 <= i && 0x0fff >= i) {
                 Data.zeroBit = "0";
-                addressNum = Data.zeroBit + Integer.toHexString(i);
+                addressNum = Data.zeroBit + Integer.toHexString(i).toUpperCase();
             } else {
-                addressNum = Data.zeroBit + Integer.toHexString(i);
+                Data.zeroBit = "";
+                addressNum = Data.zeroBit + Integer.toHexString(i).toUpperCase();
             }
             memory.add(addressNum + "     " + memData);
             memoryData.add(i);
@@ -164,23 +163,25 @@ public class ConsoleActivity extends Fragment {
                     public void onClick(View v) {
                         TextView dataText = (TextView) getActivity().findViewById(R.id.dataText);
                         if (memFlag == true) {
-                            data3 = Data.getZeroBit(inputBit);
+                            dataString = Data.getZeroBit(inputBit);
                             dataText.setText(Data.getZeroBit(inputBit));
 
                             if (0x000f >= address) {
                                 Data.zeroBit = "000";
-                                addressNum = Data.zeroBit + address;
-                            } else if (0x0010 <= address && 0x00f0 >= address) {
+                                addressNum = Data.zeroBit + Integer.toHexString(address).toUpperCase();
+                            } else if (0x0010 <= address && 0x00ff >= address) {
                                 Data.zeroBit = "00";
-                                addressNum = Data.zeroBit + address;
-                            } else if (0x0100 <= address && 0x0f00 >= address) {
+                                addressNum = Data.zeroBit + Integer.toHexString(address).toUpperCase();
+                            } else if (0x0100 <= address && 0x0fff >= address) {
                                 Data.zeroBit = "0";
-                                addressNum = Data.zeroBit + address;
+                                addressNum = Data.zeroBit + Integer.toHexString(address).toUpperCase();
                             } else {
-                                addressNum = Data.zeroBit + address;
-                            }
+                                addressNum = Data.zeroBit + Integer.toHexString(address).toUpperCase();
 
-                            memory.set(address, addressNum + "     " + data3);
+                            }
+                            addressNum = Data.zeroBit + Integer.toHexString(address).toUpperCase();
+
+                            memory.set(address, addressNum + "     " + dataString);
                             memoryData.set(address, inputBit);
 
                         }
@@ -199,7 +200,7 @@ public class ConsoleActivity extends Fragment {
                     public void onClick(View v) {
                         TextView addressText = (TextView) getActivity().findViewById(R.id.addressText);
                         if (memFlag == true) {
-                            //addressText.setText(getInputDataAns());
+
                             address = inputBit;
                             addressText.setText(Data.getZeroBit(address));
 
