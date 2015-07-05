@@ -15,13 +15,13 @@ import android.widget.TextView;
 public class ExecutionActivity extends Fragment {
 
     int pc = 0x0000;
-    int acc = 0x0000;
+    int acc = 0x0100;
     int ixr = 0x0000;
     int dbus;
     int state = 0;
     int instState = 0;
     int ir;
-    int opeState;
+    int opeState,addState;
     int instructionType;
     int type1, type2, type3, type4, type5, type6;
     int register;
@@ -31,6 +31,7 @@ public class ExecutionActivity extends Fragment {
     int loadState;
     int mdr;
     int mar;
+    int lbus;
     final String BACK_STACK_KEY = "BACK_STACK";
 
     public static ExecutionActivity newInstanceE() {
@@ -63,7 +64,7 @@ public class ExecutionActivity extends Fragment {
                 manager.popBackStack();
             }
         });
-        Button btnMem = (Button)getActivity().findViewById(R.id.memDetailE);
+        Button btnMem = (Button) getActivity().findViewById(R.id.memDetailE);
         btnMem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,20 +77,26 @@ public class ExecutionActivity extends Fragment {
                 transaction.commit();
             }
         });
+        Execute();
+
 
         setPC();
         setAcc();
-        InstructionFetch();
+        //InstructionFetch();
 
     }
 
     public void setPC() {
         pc = ConsoleActivity.getPcdata();
         TextView k16pcText = (TextView) getActivity().findViewById(R.id.k16PC);
-        k16pcText.setBackgroundResource(R.drawable.border_yellow);
+        //k16pcText.setBackgroundResource(R.drawable.border_yellow);
         k16pcText.setText(Data.getZeroBit(pc));
+    }
 
-
+    public void setIr() {
+        TextView k16irText = (TextView) getActivity().findViewById(R.id.k16IR);
+        k16irText.setBackgroundResource(R.drawable.border_yellow);
+        k16irText.setText(Data.getZeroBit(ir));
     }
 
     public void setAcc() {
@@ -155,51 +162,46 @@ public class ExecutionActivity extends Fragment {
         iorq.setChecked(check);
     }
 
+    //命令フェッチ：PCが示すアドレスから次に実行する命令をメモリから読みだし、IRに格納する。
     public void InstructionFetch() {
         switch (state) {
-            case 0:
+            case 0://PCの内容をAbusに流す。その番地へリード要求。
                 setAbus(pc);
+                setMreqLED(true);
+                setRWLED(true);
+                state++;
+                break;
+
+            case 1://メモリは、応答を返し、指定番地から取り出したデータをDbusにのせる。
                 dbus = ConsoleActivity.memoryData.get(pc);
+                setACKLED(true);
                 setDbus(dbus);
                 state++;
-                break;
-
-            case 1:
-                //dbus = ConsoleActivity.memoryData.get(pc);
-                //setDbus(dbus);
-                state++;
 
                 break;
 
-            case 2:
-                ir = ConsoleActivity.memoryData.get(pc);
+            case 2://リード要求をやめ、Dbusの内容をIRに格納する。
+                setMreqLED(true);
+                ir = dbus;
+                setIr();
                 state++;
                 break;
 
-            case 3:
+            case 3://メモリからの応答がなくなり、PCを１加える。
+                setACKLED(false);
                 pc = pc + 1;
                 break;
         }
     }
 
-    //    public void instructionDecode(){
-//        switch (instState){
-//            case 0:
-//
-//
-//                break;
-//
-//
-//            case 1:
-//                break;
-//        }
-//    }
+
     public void operandFetch() {
+        instructionType =type1;
         if (instructionType == type1) {
             switch (opeState) {
-                case 0: //EAの計算
-                    indexRegister = sift(ir, 10, 10);//インデックスレジスタの値を抽出
-                    addressConstant = sift(ir, 9, 0);//アドレス部を抽出
+                case 0: //EAの計算:インデックス修飾がない場合、アドレスはそのままにMARに乗せる。インデックス修飾ある場合、IRのアドレス部と修飾をALUで計算。
+                    indexRegister = getInstructionBit(ir, 10, 10);//インデックスレジスタの値を抽出
+                    addressConstant = getInstructionBit(ir, 9, 0);//アドレス部を抽出
                     if (indexRegister == 0) {
                         effectiveAddress = addressConstant;
                         mar = effectiveAddress;
@@ -214,30 +216,34 @@ public class ExecutionActivity extends Fragment {
                     opeState++;
                     break;
 
-                case 1://メモリの読出し1
+                case 1://データを取り出すためのリード要求。
                     setAbus(mar);
                     setMreqLED(true);
                     setRWLED(true);
                     opeState++;
                     break;
 
-                case 2:
+                case 2://メモリは応答し、EAの計算したMARで指定した番地のデータをDbusに乗せる。
                     setACKLED(true);
+                    dbus = ConsoleActivity.memoryData.get(mar);
                     setDbus(dbus);
-
                     opeState++;
                     break;
 
-                case 3:
-                    setMdr(dbus);
+                case 3://DbusからデータをMDRに乗せる。
+                    mdr = dbus;
+                    setMdr(mdr);
                     setMreqLED(false);
+                    opeState++;
                     break;
 
 
                 case 4:
                     setACKLED(false);
-
-
+                    opeState = 0;
+                    break;
+                //次に実行すべき命令をmdrに格納して終了。
+                default:
                     break;
             }
 
@@ -245,7 +251,7 @@ public class ExecutionActivity extends Fragment {
     }
 
 
-    public int sift(int data, int highIndex, int lowIndex) {
+    public int getInstructionBit(int data, int highIndex, int lowIndex) {
         data <<= (16 + 15 - highIndex);
         data >>= (16 + 15 - highIndex);
         data >>= lowIndex;
@@ -253,22 +259,83 @@ public class ExecutionActivity extends Fragment {
 
     }
 
-    private void load() {
+    //load命令：メモリからデータを読出しレジスタに格納する。
+    public void load() {
         switch (loadState) {
-            case 0:
+            case 0://オペランドフェッチ
                 operandFetch();
                 loadState++;
                 break;
 
             case 1:
                 setRbus(0);
-                setLbus(mdr);
+                lbus = mdr;
+                setLbus(lbus);
                 loadState++;
                 break;
 
             case 2:
-
+                setObus(lbus);
+                loadState++;
                 break;
+            case 3:
+                acc = lbus;
+                loadState++;
+                break;
+            default:
+                break;
+
         }
     }
+    //レジスタへメモリの値を加算:アドレス部で指定した番地のデータとACCを加算
+    public void add(){
+        switch (addState){
+            case 0:
+                operandFetch();
+                addState++;
+                break;
+
+            case 1:
+                //acc = ConsoleActivity.getAccData();
+               // acc =0x100;
+                setRbus(acc);
+                setLbus(mdr);
+                addState++;
+                break;
+
+            case 2:
+                acc=acc + 1;
+                setObus(acc);
+                addState++;
+                break;
+
+            case 3:
+                setAcc();
+                addState++;
+                break;
+
+            case 4:
+                addState =0;
+                break;
+
+            default:
+                break;
+
+        }
+
+    }
+
+    public void Execute(){
+        Button exebtn = (Button)getActivity().findViewById(R.id.execute);
+        exebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InstructionFetch();
+                operandFetch();
+                add();
+            }
+        });
+    }
+
+
 }
