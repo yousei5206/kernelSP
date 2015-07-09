@@ -15,6 +15,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+
 
 public class ExecutionActivity extends Fragment {
 
@@ -38,6 +43,11 @@ public class ExecutionActivity extends Fragment {
     int executeMode =0;
    // private Vibrator vibrator;
     final String BACK_STACK_KEY = "BACK_STACK";
+
+    private ScheduledExecutorService scheduler;
+    private ScheduledFuture<?> future;
+    private Runnable cpu;
+    //private Handler mHandler = new Handler();
 
     public static ExecutionActivity newInstanceE() {
         ExecutionActivity fragment = new ExecutionActivity();
@@ -89,7 +99,7 @@ public class ExecutionActivity extends Fragment {
         setPC();
         setAcc();
         setMar(addressConstant);
-   
+
     }
 
     private class CPU implements Runnable{
