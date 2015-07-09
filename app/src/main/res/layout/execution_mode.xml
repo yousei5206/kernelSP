@@ -321,7 +321,8 @@
                     android:textOff="BREAK POINT"
                     android:layout_alignParentTop="true"
                     android:layout_toStartOf="@+id/linearLayout3"
-                    android:id="@+id/breakPoint" />
+                    android:id="@+id/breakPoint"
+                    android:checked="false" />
 
 
                 <ToggleButton

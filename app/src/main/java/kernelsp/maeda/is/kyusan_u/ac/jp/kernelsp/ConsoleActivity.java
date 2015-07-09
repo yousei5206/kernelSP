@@ -236,8 +236,7 @@ public class ConsoleActivity extends Fragment {
                             TextView pcText = (TextView) getActivity().findViewById(R.id.pcText);
                             //TextView k16pcText =(TextView)findViewById(R.id.k16PC);
                             pcdata = inputBit;
-                            pcText.setText(Integer.toHexString(pcdata));
-                            pcText.setText(Data.getZeroBit(inputBit));
+                            pcText.setText(Data.getZeroBit(pcdata));
 
                         }
                     }

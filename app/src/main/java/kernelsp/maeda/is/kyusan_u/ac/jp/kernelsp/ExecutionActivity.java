@@ -4,12 +4,16 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 
 
 public class ExecutionActivity extends Fragment {
@@ -32,6 +36,8 @@ public class ExecutionActivity extends Fragment {
     int mdr;
     int mar;
     int lbus;
+    int executeMode =0;
+   // private Vibrator vibrator;
     final String BACK_STACK_KEY = "BACK_STACK";
 
     public static ExecutionActivity newInstanceE() {
@@ -77,14 +83,90 @@ public class ExecutionActivity extends Fragment {
                 transaction.commit();
             }
         });
+        executeModesSelect();
         Execute();
 
 
         setPC();
         setAcc();
+        setMar(addressConstant);
         //InstructionFetch();
 
+
+
     }
+
+    private class CPU implements Runnable{
+
+        public void run(){
+
+        }
+
+    }
+
+
+
+    public void executeModesSelect(){
+        final ToggleButton breakpoint =(ToggleButton)getActivity().findViewById(R.id.breakPoint);
+        final ToggleButton clock = (ToggleButton)getActivity().findViewById(R.id.clock);
+        final ToggleButton instruction = (ToggleButton)getActivity().findViewById(R.id.instruction);
+        final ToggleButton normal = (ToggleButton)getActivity().findViewById(R.id.normal);
+
+        breakpoint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                executeMode =0;
+                //breakpoint.setChecked(true);
+                clock.setChecked(false);
+                instruction.setChecked(false);
+                normal.setChecked(false);
+               // Toast.makeText(getActivity(),"BreakPointモード",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        clock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                executeMode = 1;
+              //  clock.setChecked(true);
+                breakpoint.setChecked(false);
+                instruction.setChecked(false);
+                normal.setChecked(false);
+               // Toast.makeText(getActivity(),"Clockモード",Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        instruction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                executeMode = 2;
+              ///  instruction.setChecked(true);
+                breakpoint.setChecked(false);
+                clock.setChecked(false);
+                normal.setChecked(false);
+               //Toast.makeText(getActivity(),"Instructionモード",Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+        normal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                executeMode = 3;
+                //normal.setChecked(true);
+                breakpoint.setChecked(false);
+                instruction.setChecked(false);
+                clock.setChecked(false);
+                // Toast.makeText(getActivity(),"Normalモード",Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+    }
+
+
 
     public void setPC() {
         pc = ConsoleActivity.getPcdata();
@@ -93,7 +175,7 @@ public class ExecutionActivity extends Fragment {
         k16pcText.setText(Data.getZeroBit(pc));
     }
 
-    public void setIr() {
+    public void setIr(int ir) {
         TextView k16irText = (TextView) getActivity().findViewById(R.id.k16IR);
         k16irText.setBackgroundResource(R.drawable.border_yellow);
         k16irText.setText(Data.getZeroBit(ir));
@@ -109,16 +191,19 @@ public class ExecutionActivity extends Fragment {
     public void setAbus(int abus) {
         TextView k16AbusText = (TextView) getActivity().findViewById(R.id.k16Abus);
         k16AbusText.setText(Data.getZeroBit(abus));
+        k16AbusText.setBackgroundResource(R.drawable.border_yellow);
     }
 
     public void setDbus(int dbus) {
         TextView k16DbusText = (TextView) getActivity().findViewById(R.id.k16Dbus);
         k16DbusText.setText(Data.getZeroBit(dbus));
+        k16DbusText.setBackgroundResource(R.drawable.border_yellow);
     }
 
     public void setMar(int mar) {
         TextView k16MarText = (TextView) getActivity().findViewById(R.id.k16MAR);
         k16MarText.setText(Data.getZeroBit(mar));
+        k16MarText.setBackgroundResource(R.drawable.border_yellow);
 
     }
 
@@ -166,6 +251,7 @@ public class ExecutionActivity extends Fragment {
     public void InstructionFetch() {
         switch (state) {
             case 0://PCの内容をAbusに流す。その番地へリード要求。
+                pc = ConsoleActivity.getPcdata();
                 setAbus(pc);
                 setMreqLED(true);
                 setRWLED(true);
@@ -183,13 +269,14 @@ public class ExecutionActivity extends Fragment {
             case 2://リード要求をやめ、Dbusの内容をIRに格納する。
                 setMreqLED(true);
                 ir = dbus;
-                setIr();
+                setIr(ir);
                 state++;
                 break;
 
             case 3://メモリからの応答がなくなり、PCを１加える。
                 setACKLED(false);
                 pc = pc + 1;
+                setPC();
                 break;
         }
     }
@@ -330,9 +417,24 @@ public class ExecutionActivity extends Fragment {
         exebtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InstructionFetch();
-                operandFetch();
+                MainActivity.vib.vibrate(100);
+                acc = ConsoleActivity.getAccData();
+                setAcc();
+                pc = ConsoleActivity.getPcdata();
+                setAbus(pc);
+                dbus = ConsoleActivity.memoryData.get(pc);
+                setDbus(dbus);
+                ir = dbus;
+                setIr(ir);
+                addressConstant = getInstructionBit(ir, 9, 0);//アドレス部を抽出
+                effectiveAddress = addressConstant;
+                mar = effectiveAddress;
+                setMar(mar);
+                setMdr(ConsoleActivity.memoryData.get(mar));
                 add();
+               // InstructionFetch();
+               // operandFetch();
+               // add();
             }
         });
     }
