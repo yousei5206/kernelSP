@@ -23,8 +23,7 @@ public class ExecutionActivity extends Fragment {
     int ixr = 0x0000;
     int dbus;
     int state = 0;
-    int instState = 0;
-    int ir;
+        int ir;
     int opeState,addState;
     int instructionType;
     int type1, type2, type3, type4, type5, type6;
@@ -90,10 +89,7 @@ public class ExecutionActivity extends Fragment {
         setPC();
         setAcc();
         setMar(addressConstant);
-        //InstructionFetch();
-
-
-
+   
     }
 
     private class CPU implements Runnable{
